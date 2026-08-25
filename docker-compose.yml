@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  buchungstool:
+    build: .
+    container_name: buchungstool
+    restart: unless-stopped
+    ports:
+      # Port auf der Synology - Reverse Proxy leitet auf diesen Port weiter
+      - "3046:3000"
+    volumes:
+      # Persistente SQLite-Datenbank
+      - ./data:/app/data
+    environment:
+      # Verwendet die eingebundene SQLite Datenbank
+      - DATABASE_URL=file:/app/data/prod.db
+      - NEXT_PUBLIC_BASE_URL=https://booking.befree.works
+      - ADMIN_UPDATE_WEBHOOK_URL=http://buchungstool-updater:3050/update
+      - ADMIN_UPDATE_WEBHOOK_TOKEN=${ADMIN_UPDATE_TOKEN}
+      - ADMIN_UPDATE_STATUS_FILE=/app/data/update-status.json
+
+  buchungstool-updater:
+    build: ./update-webhook
+    container_name: buchungstool-updater
+    restart: unless-stopped
+    volumes:
+      - .:/workspace
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - UPDATE_TOKEN=${ADMIN_UPDATE_TOKEN}
+      - UPDATE_GIT_REPO=${UPDATE_GIT_REPO:-}
+      - UPDATE_GIT_BRANCH=${UPDATE_GIT_BRANCH:-main}
+      - UPDATE_GIT_TOKEN=${UPDATE_GIT_TOKEN:-}
+      - UPDATE_STATUS_FILE=/workspace/data/update-status.json
+      - UPDATE_LOG_FILE=/workspace/data/update-webhook.log

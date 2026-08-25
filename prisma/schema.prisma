@@ -1,0 +1,192 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Booking {
+  id         String   @id @default(cuid())
+  type       String   // "bowling", "kidsworld", "squash", "event"
+  date       String   // YYYY-MM-DD
+  time       String   // HH:MM
+  duration   Int      // in hours
+  people     Int
+  shoes      Int      // number of shoes
+  lanes      Int?     // number of lanes (for bowling)
+  assignedLanes String? // e.g. "1, 2, 3"
+  bowlingFoodTiming String? // e.g. "vorher", "mittendrin", "nachher"
+  
+  name       String
+  email      String
+  phone      String
+  wantsFood  Boolean  @default(false)
+  notes      String?  // Besondere Wünsche
+  contactType String? @default("privat")
+  companyName String?
+  billingAddress String?
+
+  totalPrice Float
+  
+  // Kindergeburtstag spezifische Felder
+  birthdayChildName String?
+  birthdayChildAge  Int?
+  kidsCount         Int?
+  adultsCount       Int?
+  package           String?
+  additions         String?  // comma-separated
+  internalNotes     String?
+
+  // Squash spezifische Felder (für Admin Reservierungen)
+  squashRole        String?  // Kursleiter, Trainer, externer Kursleiter
+  squashCourseName  String?
+
+  // Event spezifische Felder
+  eventLocation     String?
+  eventType         String?
+  eventSetupTime    Boolean? @default(false)
+  eventBuffet       String?
+  eventServiceStaff Int?
+  eventMusicTech    String?
+  eventDuration     Int?     // Voraussichtliche Dauer in Stunden
+
+  status     String   @default("confirmed") // confirmed, cancelled
+  createdAt  DateTime @default(now())
+
+  offers     Offer[]
+}
+
+model Setting {
+  key   String @id
+  value String
+}
+
+model BlockedDay {
+  id        String   @id @default(cuid())
+  date      String   // YYYY-MM-DD
+  type      String   // "all", "bowling", "kidsworld", "squash", "event"
+  action    String   @default("block") // "block" oder "open" (für Sonderöffnungen)
+  reason    String?
+  startTime String?  // Optional: HH:MM for partial blocks/openings
+  endTime   String?  // Optional: HH:MM for partial blocks/openings
+  createdAt DateTime @default(now())
+}
+
+model Offer {
+  id             String      @id @default(cuid())
+  bookingId      String
+  booking        Booking     @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  offerNumber    String      @unique // e.g., "AGB-2026-001"
+  status         String      @default("DRAFT") // DRAFT, SENT, ACCEPTED, REJECTED
+  validUntil     DateTime?
+  customText     String?
+  subTotal       Float       @default(0)
+  taxAmount      Float       @default(0)
+  totalPrice     Float       @default(0)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  items          OfferItem[]
+}
+
+model OfferItem {
+  id          String   @id @default(cuid())
+  offerId     String
+  offer       Offer    @relation(fields: [offerId], references: [id], onDelete: Cascade)
+  description String
+  quantity    Int      @default(1)
+  unitPrice   Float
+  taxRate     Float    @default(19.0) // 19%, 7%, 0%
+  totalPrice  Float
+  createdAt   DateTime @default(now())
+}
+
+model TippUser {
+  id                 String   @id @default(cuid())
+  nickname           String   @unique
+  password           String
+  totalPoints        Int      @default(0)
+  championPrediction String?
+  championPoints     Int      @default(0)
+  createdAt          DateTime @default(now())
+  
+  // New Lead Fields
+  email              String?
+  phone              String?
+  isMember           Boolean  @default(false)
+  isMemberVerified   Boolean  @default(false)
+  
+  predictions Prediction[]
+}
+
+model Match {
+  id              String   @id @default(cuid())
+  openLigaMatchId Int?     @unique
+  teamHome        String
+  teamAway        String
+  logoHome        String?
+  logoAway        String?
+  dateTime        DateTime
+  groupName       String
+  scoreHome       Int?
+  scoreAway       Int?
+  isFinished      Boolean  @default(false)
+  
+  predictions Prediction[]
+}
+
+model Prediction {
+  id          String   @id @default(cuid())
+  userId      String
+  user        TippUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  matchId     String
+  match       Match    @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  homeScore   Int
+  awayScore   Int
+  points      Int?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId, matchId])
+}
+
+model GastroEmployee {
+  id        String           @id @default(cuid())
+  name      String           @unique
+  schedules GastroSchedule[]
+}
+
+model GastroShiftTime {
+  id        String           @id @default(cuid())
+  name      String           @unique // e.g. "Frühschicht (09:00 - 15:00)"
+  schedules GastroSchedule[]
+}
+
+model GastroArea {
+  id        String           @id @default(cuid())
+  name      String           @unique // e.g. "Service", "Theke", "Küche"
+  schedules GastroSchedule[]
+}
+
+model GastroSchedule {
+  id          String          @id @default(cuid())
+  date        String          // YYYY-MM-DD
+  employeeId  String
+  employee    GastroEmployee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  shiftTimeId String
+  shiftTime   GastroShiftTime @relation(fields: [shiftTimeId], references: [id], onDelete: Cascade)
+  areaId      String
+  area        GastroArea      @relation(fields: [areaId], references: [id], onDelete: Cascade)
+  createdAt   DateTime        @default(now())
+
+  @@unique([date, employeeId, shiftTimeId, areaId])
+}
+
+
