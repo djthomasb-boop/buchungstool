@@ -5,6 +5,7 @@ WORKSPACE="${WORKSPACE:-/workspace}"
 GIT_REPO="${UPDATE_GIT_REPO:-}"
 GIT_BRANCH="${UPDATE_GIT_BRANCH:-main}"
 GIT_TOKEN="${UPDATE_GIT_TOKEN:-}"
+COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME:-buchungstool}"
 BACKUP_DIR="$WORKSPACE/data/backups"
 
 cd "$WORKSPACE"
@@ -51,13 +52,15 @@ else
 fi
 
 if docker compose version >/dev/null 2>&1; then
-  COMPOSE=(docker compose)
+  COMPOSE=(docker compose -p "$COMPOSE_PROJECT_NAME")
 elif command -v docker-compose >/dev/null 2>&1; then
-  COMPOSE=(docker-compose)
+  COMPOSE=(docker-compose -p "$COMPOSE_PROJECT_NAME")
 else
   echo "Neither docker compose nor docker-compose is available."
   exit 1
 fi
+
+echo "Docker Compose project: $COMPOSE_PROJECT_NAME"
 
 echo "Building buchungstool container..."
 "${COMPOSE[@]}" build --no-cache buchungstool
