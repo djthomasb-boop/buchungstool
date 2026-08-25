@@ -17,6 +17,7 @@ export function UpdateTab() {
   const [info, setInfo] = useState<UpdateInfo | null>(null);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string; log?: string } | null>(null);
   const [isPending, startTransition] = useTransition();
+  const isRunning = info?.lastStatus === "running";
 
   const loadInfo = () => {
     startTransition(async () => {
@@ -28,6 +29,16 @@ export function UpdateTab() {
   useEffect(() => {
     loadInfo();
   }, []);
+
+  useEffect(() => {
+    if (!isRunning) return;
+
+    const timer = window.setInterval(() => {
+      getSystemUpdateInfo().then(setInfo).catch(() => null);
+    }, 5000);
+
+    return () => window.clearInterval(timer);
+  }, [isRunning]);
 
   const handleRunUpdate = () => {
     setMessage(null);
@@ -50,8 +61,8 @@ export function UpdateTab() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-background border border-foreground/10 rounded-xl p-4">
           <div className="text-xs font-bold uppercase text-foreground/50 mb-2">Status</div>
-          <div className={`font-black ${info?.enabled ? "text-green-600" : "text-amber-600"}`}>
-            {info?.enabled ? "Bereit" : "Nicht konfiguriert"}
+          <div className={`font-black ${isRunning ? "text-blue-500" : info?.enabled ? "text-green-600" : "text-amber-600"}`}>
+            {isRunning ? "Update läuft" : info?.enabled ? "Bereit" : "Nicht konfiguriert"}
           </div>
         </div>
         <div className="bg-background border border-foreground/10 rounded-xl p-4">
@@ -88,12 +99,17 @@ export function UpdateTab() {
         <button
           type="button"
           onClick={handleRunUpdate}
-          disabled={!info?.enabled || isPending}
+          disabled={!info?.enabled || isPending || isRunning}
           className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-black transition-all disabled:opacity-50 disabled:hover:bg-blue-600 cursor-pointer"
         >
-          <RefreshCw size={18} className={isPending ? "animate-spin" : ""} />
-          {isPending ? "Update läuft..." : "Update starten"}
+          <RefreshCw size={18} className={isPending || isRunning ? "animate-spin" : ""} />
+          {isPending || isRunning ? "Update läuft..." : "Update starten"}
         </button>
+        {isRunning && (
+          <p className="text-xs text-foreground/50 font-medium">
+            Die Seite aktualisiert den Status automatisch. Bitte den Button nicht mehrfach drücken.
+          </p>
+        )}
       </div>
 
       {message && (

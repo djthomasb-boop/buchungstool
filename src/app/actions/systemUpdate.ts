@@ -188,8 +188,13 @@ export async function runSystemUpdate() {
 
       const text = await response.text();
       result = {
-        success: response.ok,
-        message: response.ok ? "Update wurde angestoßen." : `Update-Webhook meldet HTTP ${response.status}.`,
+        success: response.ok || response.status === 409,
+        message:
+          response.status === 409
+            ? "Update läuft bereits."
+            : response.ok
+              ? "Update wurde angestoßen."
+              : `Update-Webhook meldet HTTP ${response.status}.`,
         log: text || response.statusText,
       };
     } else {
