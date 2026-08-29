@@ -39,10 +39,14 @@ export function AdminBookingCard({ booking, isToday }: { booking: any, isToday: 
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData.entries());
     
-    // Berechne ggf. Preis und Bahnen neu (vereinfacht: wir erlauben Admin manuelle Anpassung, hier berechnen wir lanes neu für Bowling)
     if (booking.type === "bowling") {
-      data.lanes = String(Math.ceil(parseInt(data.people as string) / 8));
-      const lanePrice = parseInt(data.lanes) * parseInt(data.duration as string) * 15;
+      const peopleCount = parseInt(data.people as string) || 0;
+      const durationHours = parseInt(data.duration as string) || 1;
+      const lanesByPeople = Math.ceil(peopleCount / 8);
+      const reservedLanes = Math.max(lanesByPeople, selectedLanes.length);
+
+      data.lanes = String(reservedLanes);
+      const lanePrice = reservedLanes * durationHours * 15;
       data.totalPrice = String(lanePrice);
     }
     
