@@ -26,6 +26,7 @@ fi
 
 if [ -n "$GIT_REPO" ]; then
   echo "Updating source from git repository..."
+  git config --global --add safe.directory "$WORKSPACE"
 
   GIT_AUTH_ARGS=()
   if [ -n "$GIT_TOKEN" ]; then
