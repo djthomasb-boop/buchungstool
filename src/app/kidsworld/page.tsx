@@ -6,6 +6,7 @@ import { ArrowLeft, Baby, CheckCircle, ArrowRight, PackageOpen, Users, Calendar 
 import { format, addDays } from "date-fns";
 import { de } from "date-fns/locale";
 import { submitBooking, getKindergeburtstagAvailability } from "@/app/actions/booking";
+import { BOOKING_END_DATE } from "@/lib/bookingDates";
 
 const PACKAGES = [
   { id: "Lucky Dinner", name: "Lucky Dinner", price: 12.90, desc: "Eintritt, Kiddy Box (Nuggets, Pommes, Überraschung, Trinkpäckchen), Baguettes, 1x Getränk für Eltern" },
@@ -206,6 +207,7 @@ export default function KindergeburtstagPage() {
                     value={date} 
                     onChange={e => setDate(e.target.value)} 
                     min={format(addDays(new Date(), 1), 'yyyy-MM-dd')}
+                    max={BOOKING_END_DATE}
                     className="w-full bg-background border rounded-xl px-4 py-3" 
                     required 
                   />

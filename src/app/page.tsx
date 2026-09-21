@@ -1,18 +1,28 @@
 import Link from 'next/link';
-import { ArrowRight, CircleDot, Baby, Activity, Music, Warehouse, Presentation, Trees, Castle, Trophy, Target } from 'lucide-react';
+import { ArrowRight, CircleDot, Baby, Activity, Presentation, Trees, Castle, Trophy, Target } from 'lucide-react';
 import { prisma } from "@/lib/prisma";
+import { PublicEvents } from "@/components/PublicEvents";
+import { isPublicEventConfiguratorEnabled, isPublicTippspielEnabled } from "@/lib/features";
+import { getPublicTaskcenterEvents } from "@/lib/taskcenter";
 
 export const dynamic = "force-dynamic";
 
 
 export default async function Home() {
   let isTippActive = false;
-  try {
-    const tippActiveSetting = await prisma.setting.findUnique({ where: { key: "TIPPSPIEL_ACTIVE" } });
-    isTippActive = tippActiveSetting?.value === "true";
-  } catch (error) {
-    console.error("Fehler beim Laden der Tippspiel-Einstellung:", error);
+  const eventConfiguratorEnabled = isPublicEventConfiguratorEnabled();
+  const eventsPromise = getPublicTaskcenterEvents();
+
+  if (isPublicTippspielEnabled()) {
+    try {
+      const tippActiveSetting = await prisma.setting.findUnique({ where: { key: "TIPPSPIEL_ACTIVE" } });
+      isTippActive = tippActiveSetting?.value === "true";
+    } catch (error) {
+      console.error("Fehler beim Laden der Tippspiel-Einstellung:", error);
+    }
   }
+
+  const publicEvents = await eventsPromise;
 
   return (
     <main className="min-h-screen relative overflow-hidden bg-background">
@@ -29,8 +39,8 @@ export default async function Home() {
               Sport & Erholungszentrum
             </div>
           </div>
-          <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-tight mb-6 hyphens-auto">
-            Erlebe <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#cd1212] to-[#f23529] break-words md:break-normal">unvergessliche</span><br />
+          <h1 className="text-3xl sm:text-5xl md:text-7xl font-extrabold tracking-tight mb-6">
+            Erlebe <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#cd1212] to-[#f23529]">unvergessliche</span><br />
             Momente.
           </h1>
           <p className="text-xl text-foreground/60 max-w-2xl mx-auto">
@@ -134,24 +144,26 @@ export default async function Home() {
             </div>
           </Link>
 
-          {/* Card 6: Event Konfigurator */}
-          <Link href="/eventlocation" className="group">
-            <div className="glass p-8 rounded-3xl h-full transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-pink-500/20 border border-foreground/5 hover:border-pink-500/30 relative overflow-hidden">
-              <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
-                <Presentation size={80} />
+          {/* Event Konfigurator remains available in code and can be re-enabled via environment variable. */}
+          {eventConfiguratorEnabled && (
+            <Link href="/eventlocation" className="group">
+              <div className="glass p-8 rounded-3xl h-full transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-pink-500/20 border border-foreground/5 hover:border-pink-500/30 relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
+                  <Presentation size={80} />
+                </div>
+                <div className="bg-pink-500/10 w-14 h-14 rounded-2xl flex items-center justify-center mb-6 text-pink-500">
+                  <Presentation size={28} />
+                </div>
+                <h2 className="text-2xl font-bold mb-3">Event Konfigurator (Indoor & Halle)</h2>
+                <p className="text-foreground/60 mb-8 leading-relaxed">
+                  Stelle dir dein perfektes Event zusammen. Ob Kursraum, Saal oder die große Halle - berechne dein Event live online.
+                </p>
+                <div className="flex items-center text-sm font-semibold text-pink-500 mt-auto">
+                  Zum Konfigurator <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                </div>
               </div>
-              <div className="bg-pink-500/10 w-14 h-14 rounded-2xl flex items-center justify-center mb-6 text-pink-500">
-                <Presentation size={28} />
-              </div>
-              <h2 className="text-2xl font-bold mb-3">Event Konfigurator (Indoor & Halle)</h2>
-              <p className="text-foreground/60 mb-8 leading-relaxed">
-                Stelle dir dein perfektes Event zusammen. Ob Kursraum, Saal oder die große Halle - berechne dein Event live online.
-              </p>
-              <div className="flex items-center text-sm font-semibold text-pink-500 mt-auto">
-                Zum Konfigurator <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
-              </div>
-            </div>
-          </Link>
+            </Link>
+          )}
 
           {/* Card 7: Kurs- & Eventraum / Kegelbahn */}
           <Link href="/dartkegeln" className="group">
@@ -193,6 +205,8 @@ export default async function Home() {
             </Link>
           )}
         </div>
+
+        <PublicEvents events={publicEvents} />
 
         <div className="mt-16 text-center">
           <a 

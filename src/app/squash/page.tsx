@@ -6,6 +6,7 @@ import { ArrowLeft, ArrowRight, Activity, CheckCircle, Clock, CalendarIcon, User
 import { format, addDays } from "date-fns";
 import { de } from "date-fns/locale";
 import { submitBooking, getSquashAvailability } from "@/app/actions/booking";
+import { BOOKING_END_DATE } from "@/lib/bookingDates";
 
 export default function SquashPage() {
   const [step, setStep] = useState(1);
@@ -143,6 +144,7 @@ export default function SquashPage() {
                   value={date} 
                   onChange={e => setDate(e.target.value)} 
                   min={format(new Date(), 'yyyy-MM-dd')}
+                  max={BOOKING_END_DATE}
                   className="w-full sm:w-1/2 bg-background border rounded-xl px-4 py-3 focus:ring-2 focus:ring-green-500 outline-none" 
                   required 
                 />

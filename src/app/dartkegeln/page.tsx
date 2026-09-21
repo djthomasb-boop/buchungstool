@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, Target, Clock, Users, CalendarDays, Info, User, Mail, Phone, Utensils, MessageSquare, CheckCircle2, AlertCircle, Sparkles, BookOpen } from "lucide-react";
 import { submitBooking, getDartKegelnAvailability } from "@/app/actions/booking";
+import { getBookingEndDate } from "@/lib/bookingDates";
 
 export default function DartKegelnPage() {
   const [step, setStep] = useState(1);
@@ -58,19 +59,17 @@ export default function DartKegelnPage() {
     return `${yyyy}-${mm}-${dd}`;
   }, []);
 
-  // Generate dates up to 31.12.2026
+  // Generate all selectable dates through the end of 2027.
   const [selectedMonth, setSelectedMonth] = useState<string>("");
   const [availableDates, setAvailableDates] = useState<Date[]>([]);
   
   useEffect(() => {
     const dates = [];
     const today = new Date();
-    const endOfYear = new Date(2026, 11, 31); // 11 = December
+    const bookingEndDate = getBookingEndDate();
     
     const current = new Date(today);
-    const limit = current > endOfYear ? new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000) : endOfYear;
-    
-    while (current <= limit) {
+    while (current <= bookingEndDate) {
       dates.push(new Date(current));
       current.setDate(current.getDate() + 1);
     }

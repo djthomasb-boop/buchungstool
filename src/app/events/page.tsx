@@ -6,6 +6,7 @@ import { ArrowLeft, Music, CheckCircle, ArrowRight, PackageOpen, Users, Calendar
 import { format, addDays } from "date-fns";
 import { de } from "date-fns/locale";
 import { submitBooking } from "@/app/actions/booking";
+import { BOOKING_END_DATE } from "@/lib/bookingDates";
 
 export default function EventsPage() {
   const [step, setStep] = useState(1);
@@ -243,7 +244,7 @@ export default function EventsPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-bold mb-2">Wunsch-Datum</label>
-                    <input type="date" value={date} onChange={e => setDate(e.target.value)} min={format(addDays(new Date(), 3), 'yyyy-MM-dd')} className="w-full bg-background border rounded-xl px-4 py-3" required />
+                    <input type="date" value={date} onChange={e => setDate(e.target.value)} min={format(addDays(new Date(), 3), 'yyyy-MM-dd')} max={BOOKING_END_DATE} className="w-full bg-background border rounded-xl px-4 py-3" required />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>

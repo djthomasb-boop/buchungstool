@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowLeft, CircleDot, Clock, Users, CalendarDays, Info, User, Mail, Phone, Utensils, MessageSquare, CheckCircle2, AlertCircle } from "lucide-react";
 import { submitBooking, getBowlingAvailability } from "@/app/actions/booking";
 import { getBowlingStartHours, getMaxBowlingDuration, isBowlingBookingWithinOpeningHours } from "@/lib/bowlingRules";
+import { getBookingEndDate } from "@/lib/bookingDates";
 
 export default function BowlingPage() {
   const [date, setDate] = useState("");
@@ -73,20 +74,17 @@ export default function BowlingPage() {
     return lanePrice;
   }, [bookingPackage, people, lanePrice]);
 
-  // Generate dates up to 31.12.2026
+  // Generate all selectable dates through the end of 2027.
   const [selectedMonth, setSelectedMonth] = useState<string>("");
   const [availableDates, setAvailableDates] = useState<Date[]>([]);
   
   useEffect(() => {
     const dates = [];
     const today = new Date();
-    const endOfYear = new Date(2026, 11, 31); // 11 = December
+    const bookingEndDate = getBookingEndDate();
     
     const current = new Date(today);
-    // If today is somehow already past 2026, show at least 30 days
-    const limit = current > endOfYear ? new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000) : endOfYear;
-    
-    while (current <= limit) {
+    while (current <= bookingEndDate) {
       dates.push(new Date(current));
       current.setDate(current.getDate() + 1);
     }

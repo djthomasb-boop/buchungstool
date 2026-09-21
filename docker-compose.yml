@@ -15,6 +15,11 @@ services:
       # Verwendet die eingebundene SQLite Datenbank
       - DATABASE_URL=file:/app/data/prod.db
       - NEXT_PUBLIC_BASE_URL=https://booking.befree.works
+      - NEXT_PUBLIC_TICKET_SHOP_URL=https://befree.world/event-tickets
+      - TASKCENTER_API_URL=https://ticket.befree.works
+      - TASKCENTER_API_USER_ID=${TASKCENTER_API_USER_ID:-1}
+      - TIPPSPIEL_ENABLED=false
+      - EVENT_CONFIGURATOR_ENABLED=false
       - ADMIN_UPDATE_WEBHOOK_URL=http://buchungstool-updater:3050/update
       - ADMIN_UPDATE_WEBHOOK_TOKEN=${ADMIN_UPDATE_TOKEN}
       - ADMIN_UPDATE_STATUS_FILE=/app/data/update-status.json

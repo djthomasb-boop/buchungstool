@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowLeft, CheckCircle, Calculator, Presentation } from "lucide-react";
 import { submitBooking } from "@/app/actions/booking";
 import { format, addDays } from "date-fns";
+import { BOOKING_END_DATE } from "@/lib/bookingDates";
 
 export default function EventLocationPage() {
   const [step, setStep] = useState(1);
@@ -183,7 +184,7 @@ export default function EventLocationPage() {
             <div className="grid grid-cols-2 gap-4 mb-4">
               <div>
                 <label className="block text-sm font-medium mb-1">Datum</label>
-                <input type="date" value={date} onChange={e => setDate(e.target.value)} min={format(addDays(new Date(), 3), 'yyyy-MM-dd')} className="w-full bg-background border rounded-lg px-3 py-2" required />
+                <input type="date" value={date} onChange={e => setDate(e.target.value)} min={format(addDays(new Date(), 3), 'yyyy-MM-dd')} max={BOOKING_END_DATE} className="w-full bg-background border rounded-lg px-3 py-2" required />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Uhrzeit</label>

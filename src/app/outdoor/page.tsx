@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowLeft, CheckCircle, ArrowRight, PackageOpen, Users, CalendarIcon, Info, Trees } from "lucide-react";
 import { format, addDays } from "date-fns";
 import { submitBooking } from "@/app/actions/booking";
+import { BOOKING_END_DATE } from "@/lib/bookingDates";
 
 export default function OutdoorPage() {
   const [step, setStep] = useState(1);
@@ -176,7 +177,7 @@ export default function OutdoorPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-bold mb-2">Wunsch-Datum</label>
-                    <input type="date" value={date} onChange={e => setDate(e.target.value)} min={format(addDays(new Date(), 3), 'yyyy-MM-dd')} className="w-full bg-background border rounded-xl px-4 py-3" required />
+                    <input type="date" value={date} onChange={e => setDate(e.target.value)} min={format(addDays(new Date(), 3), 'yyyy-MM-dd')} max={BOOKING_END_DATE} className="w-full bg-background border rounded-xl px-4 py-3" required />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>

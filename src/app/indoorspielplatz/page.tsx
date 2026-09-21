@@ -6,6 +6,7 @@ import { ArrowLeft, CheckCircle, Calendar as CalendarIcon, Users, Castle } from 
 import { format, addDays } from "date-fns";
 import { de } from "date-fns/locale";
 import { submitBooking, getKindergeburtstagAvailability } from "@/app/actions/booking"; // getKindergeburtstagAvailability already checks the indoor capacity
+import { BOOKING_END_DATE } from "@/lib/bookingDates";
 
 export default function IndoorspielplatzPage() {
   const [step, setStep] = useState(1);
@@ -158,6 +159,7 @@ export default function IndoorspielplatzPage() {
                     value={date} 
                     onChange={e => setDate(e.target.value)} 
                     min={format(new Date(), 'yyyy-MM-dd')}
+                    max={BOOKING_END_DATE}
                     className="w-full bg-background border rounded-xl px-4 py-3" 
                     required 
                   />

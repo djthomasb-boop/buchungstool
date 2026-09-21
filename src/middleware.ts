@@ -1,7 +1,16 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { isPublicEventConfiguratorEnabled, isPublicTippspielEnabled } from '@/lib/features';
 
 export function middleware(req: NextRequest) {
+  if (req.nextUrl.pathname.startsWith('/tippspiel') && !isPublicTippspielEnabled()) {
+    return NextResponse.redirect(new URL('/', req.url));
+  }
+
+  if (req.nextUrl.pathname.startsWith('/eventlocation') && !isPublicEventConfiguratorEnabled()) {
+    return NextResponse.redirect(new URL('/', req.url));
+  }
+
   if (req.nextUrl.pathname.startsWith('/admin')) {
     const session = req.cookies.get('admin_session');
     
@@ -16,5 +25,5 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*'],
+  matcher: ['/admin/:path*', '/tippspiel/:path*', '/eventlocation/:path*'],
 };
