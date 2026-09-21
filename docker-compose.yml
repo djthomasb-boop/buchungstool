@@ -10,7 +10,9 @@ services:
       - "3046:3000"
     volumes:
       # Persistente SQLite-Datenbank
-      - ./data:/app/data
+      # Der absolute Standardpfad ist auch dann gueltig, wenn der Updater
+      # Docker Compose aus seinem /workspace-Mount heraus startet.
+      - ${BOOKINGTOOL_HOST_PATH:-/volume1/docker/buchungstool}/data:/app/data
     environment:
       # Verwendet die eingebundene SQLite Datenbank
       - DATABASE_URL=file:/app/data/prod.db
