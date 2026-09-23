@@ -113,7 +113,7 @@ export function AdminDashboardClient({
               : "bg-foreground/5 text-foreground/70 hover:bg-foreground/10"
           }`}
         >
-          <span>📁 Archiv (Vergangene 4 Wochen)</span>
+          <span>📁 Archiv (Alle vergangenen)</span>
         </button>
       </div>
       {/* Filter Tabs */}

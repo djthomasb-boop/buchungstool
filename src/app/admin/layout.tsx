@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LayoutDashboard, Settings, CalendarDays, PlusCircle, Baby, Calculator, BookOpen, Lightbulb, CircleDot, Trophy, Sparkles, Target, Printer, RefreshCw } from "lucide-react";
+import { LayoutDashboard, Settings, CalendarDays, PlusCircle, Baby, Calculator, BookOpen, Lightbulb, CircleDot, Trophy, Sparkles, Target, Printer, RefreshCw, BarChart3 } from "lucide-react";
 import { LogoutButton } from "@/components/admin/LogoutButton";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -21,6 +21,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <nav className="flex-none md:flex-1 px-4 pb-4 md:pb-0 space-y-0 md:space-y-2 flex gap-2 md:block overflow-x-auto" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           <Link href="/admin" className="flex-none flex items-center gap-2 md:gap-3 px-4 py-2 md:py-3 rounded-xl text-foreground/80 hover:bg-blue-500/10 hover:text-blue-500 transition-all font-medium text-sm md:text-base">
             <LayoutDashboard size={18} /> <span className="whitespace-nowrap">Tagesübersicht</span>
+          </Link>
+          <Link href="/admin/analytics" className="flex-none flex items-center gap-2 md:gap-3 px-4 py-2 md:py-3 rounded-xl text-foreground/80 hover:bg-blue-500/10 hover:text-blue-500 transition-all font-medium text-sm md:text-base">
+            <BarChart3 size={18} /> <span className="whitespace-nowrap">Analytics</span>
           </Link>
           <Link href="/admin/settings?tab=dienstplan" className="flex-none flex items-center gap-2 md:gap-3 px-4 py-2 md:py-3 rounded-xl text-blue-600 bg-blue-500/10 hover:bg-blue-500/20 transition-all font-bold text-sm md:text-base">
             <CalendarDays size={18} /> <span className="whitespace-nowrap">📋 Dienstplan</span>

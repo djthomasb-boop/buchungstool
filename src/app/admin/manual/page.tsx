@@ -10,21 +10,24 @@ export default async function ManualPage() {
   const defaultText = `Willkommen in der be free Buchungstool-Verwaltung!
 
 1. Tagesübersicht
-Hier siehst du alle anstehenden Buchungen und Events für den ausgewählten Tag. Du kannst Buchungen bearbeiten oder stornieren.
+Hier siehst du alle anstehenden Buchungen und das vollständige Archiv seit Aufzeichnungsbeginn. Du kannst Buchungen bearbeiten oder stornieren.
 
-2. Sperrzeiten
+2. Analytics
+Hier findest du Kennzahlen, Diagramme und eine filterbare Tabelle aller Buchungen seit Aufzeichnungsbeginn.
+
+3. Sperrzeiten
 Falls die Anlage (oder bestimmte Bereiche wie Bowling, Kidsworld, Squash) geschlossen ist, kannst du hier Sperrzeiten eintragen. An diesen Tagen sind keine Online-Buchungen möglich.
 
-3. Neuer Kindergeburtstag
+4. Neuer Kindergeburtstag
 Lege hier manuell einen neuen Kindergeburtstag an. Wähle das entsprechende Paket (z.B. Tea Time), die Anzahl der Kinder/Erwachsenen und eventuelle Extras.
 
-4. Squash Blockieren
+5. Squash Blockieren
 Blockiere hier Squash-Courts für Kurse, Turniere oder interne Zwecke.
 
-5. Event-Kalkulator
+6. Event-Kalkulator
 Erstelle hier Angebote und Kalkulationen für größere Events.
 
-6. Features vorschlagen
+7. Features vorschlagen
 Hast du eine Idee oder fehlt dir eine Funktion? Klicke links im Menü auf "Features vorschlagen", um eine direkte E-Mail an die Entwickler zu senden.`;
 
   const currentText = manual?.value || defaultText;
